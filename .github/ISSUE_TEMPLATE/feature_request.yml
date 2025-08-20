@@ -1,0 +1,40 @@
+name: Feature request
+description: Propose a new idea or improvement
+labels: ["type:feature"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: Please describe the problem and the proposed solution.
+
+  - type: input
+    id: motivation
+    attributes:
+      label: Motivation
+      placeholder: e.g. "Need macvlan default parent autodetection"
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      placeholder: What should happen? Any CLI flags, config keys, UX?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - label: Affects CLI
+        - label: Affects Vagrant hooks
+        - label: i18n strings required (en/fr)

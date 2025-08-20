@@ -1,0 +1,51 @@
+{
+  "extends": ["config:recommended", ":disableDependencyDashboard"],
+  "enabledManagers": ["bundler", "github-actions"],
+  "labels": ["deps"],
+  "prHourlyLimit": 5,
+  "prConcurrentLimit": 10,
+
+  "semanticCommits": "enabled",
+  "semanticCommitType": "chore",
+  "semanticCommitScope": "deps",
+
+  "lockFileMaintenance": { "enabled": true, "schedule": ["monthly"] },
+
+  "packageRules": [
+    {
+      "matchManagers": ["bundler"],
+      "groupName": "bundler (minor/patch)",
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true,
+      "automergeType": "branch"
+    },
+    {
+      "matchManagers": ["bundler"],
+      "groupName": "bundler (major)",
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "groupName": "GitHub Actions (minor/patch)",
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    },
+    {
+      "groupName": "dev tools (rubocop/rspec/rake)",
+      "matchPackageNames": ["rubocop", "rubocop-rspec", "rspec", "rake"],
+      "matchManagers": ["bundler"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    }
+  ],
+
+  "regexManagers": [
+    {
+      "fileMatch": ["^\\.ruby-version$"],
+      "matchStrings": ["^(?<currentValue>\\d+\\.\\d+\\.\\d+)$"],
+      "depNameTemplate": "ruby",
+      "datasourceTemplate": "ruby-version"
+    }
+  ]
+}

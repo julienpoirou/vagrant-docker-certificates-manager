@@ -1,0 +1,147 @@
+name: Publish
+
+on:
+  release:
+    types: [published, prereleased, created]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to publish (e.g. v1.2.3)"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      OWNER: ${{ github.repository_owner }}
+      RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Resolve tag/version/prerelease
+        id: resolve
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag_event="${RELEASE_TAG_NAME:-}"
+          pre_event="${RELEASE_PRERELEASE:-}"
+          tag_input="${INPUT_TAG:-}"
+
+          tag_ref=""
+          if [[ "${GITHUB_REF_TYPE:-}" == "tag" && -n "${GITHUB_REF_NAME:-}" ]]; then
+            tag_ref="${GITHUB_REF_NAME}"
+          fi
+
+          tag_name=""
+          if [[ -n "$tag_event" ]]; then
+            tag_name="$tag_event"
+          elif [[ -n "$tag_input" ]]; then
+            tag_name="$tag_input"
+          elif [[ -n "$tag_ref" ]]; then
+            tag_name="$tag_ref"
+          else
+            git fetch --tags --force --quiet
+            if git describe --tags --exact-match >/dev/null 2>&1; then
+              tag_name="$(git describe --tags --exact-match)"
+            else
+              tag_name="$(git describe --tags --abbrev=0)"
+            fi
+          fi
+          [[ -n "$tag_name" ]] || { echo "Unable to determine tag" >&2; exit 1; }
+
+          version="${tag_name#v}"
+
+          is_pre="$pre_event"
+          if [[ -z "$is_pre" ]]; then
+            if [[ "$tag_name" =~ -(alpha|beta|rc|pre|preview) ]]; then
+              is_pre="true"
+            else
+              is_pre="false"
+            fi
+          fi
+
+          echo "$version" > lib/vagrant-docker-certificates-manager/VERSION
+
+          {
+            echo "TAG_NAME=$tag_name"
+            echo "VERSION=$version"
+            echo "IS_PRERELEASE=$is_pre"
+          } >> "$GITHUB_ENV"
+
+          {
+            echo "tag_name=$tag_name"
+            echo "version=$version"
+            echo "is_prerelease=$is_pre"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "DEBUG → TAG_NAME=$tag_name | IS_PRERELEASE=$is_pre | RUBYGEMS_API_KEY_SET=$([[ -n ${RUBYGEMS_API_KEY:-} ]] && echo yes || echo no)"
+
+      - name: Build gem
+        run: |
+          set -euo pipefail
+          gem build vagrant-docker-certificates-manager.gemspec
+          GEM_FILE="$(find . -maxdepth 1 -type f -name '*.gem' -print | head -n1)"
+          GEM_FILE="${GEM_FILE#./}"
+          echo "GEM_FILE=$GEM_FILE" >> "$GITHUB_ENV"
+          sha256sum "$GEM_FILE" | awk '{print $1}' > "${GEM_FILE}.sha256"
+          printf '== Built %s\n' "$GEM_FILE"
+
+      - name: Upload gem as CI artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gem
+          path: |
+            ${{ env.GEM_FILE }}
+            ${{ env.GEM_FILE }}.sha256
+
+      - name: Publish to RubyGems (skip on prerelease or missing secret)
+        if: env.IS_PRERELEASE != 'true' && env.RUBYGEMS_API_KEY != ''
+        shell: bash
+        env:
+          GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+        run: |
+          set -euo pipefail
+          gem push "${GEM_FILE}"
+
+      - name: Publish to GitHub Packages (RubyGems)
+        if: env.GEM_FILE != ''
+        env:
+          GPR_PAT: ${{ secrets.GH_PACKAGES_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${GPR_PAT:-}" ]]; then
+            echo "Missing GH_PACKAGES_TOKEN secret (PAT with write:packages)." >&2
+            exit 1
+          fi
+          mkdir -p ~/.gem
+          printf -- "---\n:github: Bearer %s\n" "$GPR_PAT" > ~/.gem/credentials
+          chmod 0600 ~/.gem/credentials
+          gem push --key github --host "https://rubygems.pkg.github.com/${OWNER}" "${GEM_FILE}"
+
+      - name: Attach gem to GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TAG="${{ steps.resolve.outputs.tag_name }}"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG exists."
+          else
+            echo "Creating release $TAG."
+            gh release create "$TAG" --title "$TAG" --notes "Automated release"
+          fi
+          gh release upload "$TAG" "${GEM_FILE}" "${GEM_FILE}.sha256" --clobber

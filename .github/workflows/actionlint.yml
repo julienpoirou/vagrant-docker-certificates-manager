@@ -1,0 +1,36 @@
+name: Lint GitHub Actions
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+    paths:
+      - .github/workflows/*.yml
+      - .github/workflows/*.yaml
+
+permissions:
+  contents: read
+
+jobs:
+  actionlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install shellcheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+
+      - name: Download actionlint
+        run: |
+          set -euo pipefail
+          mkdir -p bin
+          curl -sSL https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash \
+            | bash -s -- latest bin
+
+      - name: Run actionlint
+        env:
+          SHELLCHECK_OPTS: "-e SC2059 -e SC2129 -e SC2012 -e SC2035"
+        run: bin/actionlint -color

@@ -1,0 +1,93 @@
+en:
+  vdcm:
+    cli:
+      title: "Vagrant Docker Certificates Manager"
+      usage: "Usage: vagrant certs <add|remove|list|version|help> [options]"
+      opt_lang: "Force language (en|fr)"
+      opt_no_emoji: "Disable emoji in CLI output"
+      opt_help: "Show help and exit"
+
+    help:
+      general_title: "Vagrant Docker Certificates Manager — Commands:"
+      topic_header: "Help: vagrant certs %{topic}"
+      usage_label: "Usage:"
+      description_label: "Description:"
+      options_label: "Options:"
+      examples_label: "Examples:"
+      commands:
+        add:     "vagrant certs add [PATH]        # Install the certificate"
+        remove:  "vagrant certs remove [PATH]     # Uninstall the certificate"
+        list:    "vagrant certs list              # Show tracked certificates"
+        version: "vagrant certs version           # Print plugin version"
+        help:    "vagrant certs help [TOPIC]      # This help"
+      topic:
+        add:
+          usage: "vagrant certs add <PATH_CERT_FILE> [--lang en|fr] [--no-emoji]"
+          description: "Install the given Root CA into the system trust store. Fails if already present."
+          options:
+            lang: "--lang <en|fr>    Force language"
+            noemoji: "--no-emoji        Disable emoji in output"
+          examples:
+            - "vagrant certs add ./certs/rootca.pem"
+        remove:
+          usage: "vagrant certs remove <PATH_CERT_FILE> [--lang en|fr] [--no-emoji]"
+          description: "Remove a certificate previously installed by this plugin using its path (or tracked entry)."
+          options:
+            lang: "--lang <en|fr>    Force language"
+            noemoji: "--no-emoji        Disable emoji in output"
+          examples:
+            - "vagrant certs remove ./certs/rootca.pem"
+        list:
+          usage: "vagrant certs list [--lang en|fr] [--no-emoji]"
+          description: "Show certificates tracked by this plugin."
+          options:
+            lang: "--lang <en|fr>    Force language"
+            noemoji: "--no-emoji        Disable emoji in output"
+
+    messages:
+      version_line: "v%{v}."
+
+    errors:
+      invalid_path: "Invalid certificate path: %{path}"
+      missing_path_remove: "You must provide a path for removal."
+      not_found_for_remove: "No tracked certificate found for path: %{path}"
+      already_present: "The certificate %{name} already exists."
+      install_failed: "Certificate installation failed."
+      uninstall_failed: "Certificate removal failed."
+      remove_failed: "Remove failed."
+      cert_not_found: "Certificate file not found: %{path}"
+      os_unsupported: "Unsupported OS for this action."
+      unknown_command: "Unknown command: %{cmd}"
+
+    add:
+      success: "Certificate %{name} installed."
+
+    remove:
+      success: "Certificate removed."
+
+    list:
+      header: "Certificates installed by this plugin:"
+      empty: "No certificate tracked by this plugin."
+
+    install:
+      start: "Installing certificate %{name} from %{path}..."
+      success: "Certificate %{name} installed."
+      fail: "Failed to install certificate %{name}."
+      skip: "Install on up disabled; skipping."
+
+    uninstall:
+      start: "Uninstalling certificate %{name}..."
+      success: "Certificate %{name} removed."
+      fail: "Failed to remove certificate %{name}."
+      skip: "Remove on destroy disabled; skipping."
+
+    errors:
+      invalid_path: "Invalid certificate path: %{path}"
+      missing_path_remove: "You must provide a path for removal."
+      not_found_for_remove: "No tracked certificate found for path: %{path}"
+      already_present: "The certificate %{name} already exists."
+      install_failed: "Certificate installation failed."
+      uninstall_failed: "Certificate removal failed."
+      remove_failed: "Remove failed."
+      os_unsupported: "Unsupported OS for this action."
+      unknown_command: "Unknown command: %{cmd}"

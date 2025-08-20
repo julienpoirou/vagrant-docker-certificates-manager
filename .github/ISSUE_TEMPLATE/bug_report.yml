@@ -1,0 +1,64 @@
+name: Bug report
+description: Report a reproducible problem
+labels: ["type:bug"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: Please fill the form below.
+
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+      description: Short description of the bug
+      placeholder: e.g. "network reload fails when subnet overlaps"
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Commands, config, minimal repro
+      placeholder: |
+        1. ...
+        2. ...
+        Expected: ...
+        Actual: ...
+      render: bash
+    validations:
+      required: true
+
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      description: OS, Ruby, Vagrant, Docker versions
+      placeholder: |
+        - OS:
+        - Ruby:
+        - Vagrant:
+        - Docker:
+        - Plugin version:
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Paste relevant logs or screenshots
+      render: text
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I searched existing issues
+          required: true
+        - label: This is reproducible with latest main / Repro avec la branche main
+          required: false

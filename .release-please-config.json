@@ -1,0 +1,31 @@
+
+{
+  "bootstrap-sha": "",
+  "release-type": "simple",
+  "packages": {
+    ".": {
+      "changelog-path": "CHANGELOG.md",
+      "extra-files": [
+        {
+          "type": "plain-text",
+          "path": "lib/vagrant-docker-certificates-manager/VERSION"
+        }
+      ],
+      "changelog-sections": [
+        { "type": "feat",     "section": "Fonctionnalités ✨" },
+        { "type": "fix",      "section": "Corrections 🐛" },
+        { "type": "refactor", "section": "Refactoring 🛠" },
+        { "type": "perf",     "section": "Performance ⚡" },
+        { "type": "docs",     "section": "Documentation 📖" },
+        { "type": "style",    "section": "Styles 🎨" },
+        { "type": "test",     "section": "Tests ✅" },
+        { "type": "ci",       "section": "CI 🧑‍💻" },
+        { "type": "revert",   "section": "Reverts ⏪" },
+        { "type": "chore",    "section": "Maintenance 🧹", "hidden": false }
+      ]
+    }
+  },
+  "plugins": [
+    { "type": "sentence-case" }
+  ]
+}

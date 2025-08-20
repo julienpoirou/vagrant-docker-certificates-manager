@@ -1,0 +1,24 @@
+# Bundler / Ruby dependencies
+.bundle/
+vendor/
+Gemfile.lock
+
+# Temporary files and caches
+*.gem
+*.rbc
+*.tmp
+*.log
+*.swp
+*.swo
+*.DS_Store
+*.rspec_status
+
+# RSpec / code coverage reports
+coverage/
+.rspec_status
+
+# Vagrant artifacts
+.vagrant/
+
+# Miscellaneous temporary files
+tmp/

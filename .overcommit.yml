@@ -1,0 +1,12 @@
+PreCommit:
+  RuboCop:
+    enabled: true
+    required_executable: 'bundle'
+    command: ['bundle', 'exec', 'rubocop', '-A']
+    on_warn: fail
+
+CommitMsg:
+  MessageFormat:
+    enabled: true
+    pattern: '^(revert: )?(feat|fix|perf|refactor|docs|style|test|build|chore|ci)(\([\w\-.,]+\))?(!)?: .+'
+    message: 'Use Conventional Commits, ex: feat(util): support --force on disconnect'

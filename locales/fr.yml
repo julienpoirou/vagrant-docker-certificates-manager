@@ -1,0 +1,93 @@
+fr:
+  vdcm:
+    cli:
+      title: "Gestionnaire de certificats Docker pour Vagrant"
+      usage: "Utilisation : vagrant certs <add|remove|list|version|help> [options]"
+      opt_lang: "Forcer la langue (en|fr)"
+      opt_no_emoji: "Désactiver les émojis dans la sortie"
+      opt_help: "Afficher l'aide et quitter"
+
+    help:
+      general_title: "Gestionnaire de certificats — Commandes :"
+      topic_header: "Aide : vagrant certs %{topic}"
+      usage_label: "Utilisation :"
+      description_label: "Description :"
+      options_label: "Options :"
+      examples_label: "Exemples :"
+      commands:
+        add:     "vagrant certs add [CHEMIN]        # Installer le certificat"
+        remove:  "vagrant certs remove [CHEMIN]     # Désinstaller le certificat"
+        list:    "vagrant certs list                # Afficher les certificats suivis"
+        version: "vagrant certs version             # Afficher la version du plugin"
+        help:    "vagrant certs help [SUJET]        # Cette aide"
+      topic:
+        add:
+          usage: "vagrant certs add <CHEMIN_CERT> [--lang en|fr] [--no-emoji]"
+          description: "Installe la CA fournie dans le trousseau système. Échoue si elle existe déjà."
+          options:
+            lang: "--lang <en|fr>    Forcer la langue"
+            noemoji: "--no-emoji        Désactiver les émojis"
+          examples:
+            - "vagrant certs add ./certs/rootca.pem"
+        remove:
+          usage: "vagrant certs remove <CHEMIN_CERT> [--lang en|fr] [--no-emoji]"
+          description: "Supprime un certificat installé par ce plugin à partir de son chemin (ou de l'entrée suivie)."
+          options:
+            lang: "--lang <en|fr>    Forcer la langue"
+            noemoji: "--no-emoji        Désactiver les émojis"
+          examples:
+            - "vagrant certs remove ./certs/rootca.pem"
+        list:
+          usage: "vagrant certs list [--lang en|fr] [--no-emoji]"
+          description: "Affiche les certificats suivis par ce plugin."
+          options:
+            lang: "--lang <en|fr>    Forcer la langue"
+            noemoji: "--no-emoji        Désactiver les émojis"
+
+    messages:
+      version_line: "v%{v}."
+
+    errors:
+      invalid_path: "Chemin de certificat invalide : %{path}"
+      missing_path_remove: "Vous devez fournir un chemin pour la suppression."
+      not_found_for_remove: "Aucun certificat suivi pour le chemin : %{path}"
+      already_present: "Le certificat %{name} existe déjà."
+      install_failed: "Échec de l'installation du certificat."
+      uninstall_failed: "Échec de la suppression du certificat."
+      remove_failed: "Échec de la suppression."
+      cert_not_found: "Fichier certificat introuvable : %{path}"
+      os_unsupported: "Système non pris en charge pour cette action."
+      unknown_command: "Commande inconnue : %{cmd}"
+
+    add:
+      success: "Certificat %{name} installé."
+
+    remove:
+      success: "Certificat supprimé."
+
+    list:
+      header: "Certificats installés par ce plugin :"
+      empty: "Aucun certificat suivi par ce plugin."
+
+    install:
+      start: "Installation du certificat %{name} depuis %{path}…"
+      success: "Certificat %{name} installé."
+      fail: "Échec de l'installation du certificat %{name}."
+      skip: "Installation à l'up désactivée ; on ignore."
+
+    uninstall:
+      start: "Désinstallation du certificat %{name}…"
+      success: "Certificat %{name} supprimé."
+      fail: "Échec de la suppression du certificat %{name}."
+      skip: "Suppression à la destruction désactivée ; on ignore."
+
+    errors:
+      invalid_path: "Chemin de certificat invalide : %{path}"
+      missing_path_remove: "Vous devez fournir un chemin à supprimer."
+      not_found_for_remove: "Aucun certificat suivi pour le chemin : %{path}"
+      already_present: "Le certificat %{name} existe déjà."
+      install_failed: "Échec de l'installation du certificat."
+      uninstall_failed: "Échec de la suppression du certificat."
+      remove_failed: "Échec de la suppression."
+      os_unsupported: "Système non pris en charge pour cette action."
+      unknown_command: "Commande inconnue : %{cmd}"

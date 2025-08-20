@@ -1,0 +1,49 @@
+inherit_from: .rubocop_todo.yml
+
+AllCops:
+  TargetRubyVersion: 3.4
+  NewCops: enable
+  SuggestExtensions: false
+  Exclude:
+    - 'vendor/**/*'
+    - 'tmp/**/*'
+
+require:
+  - rubocop-rspec
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+
+Metrics/ModuleLength:
+  Exclude:
+    - 'lib/vagrant-docker-certificates-manager/helpers.rb'
+
+Layout/LineLength:
+  Max: 120
+
+Style/Documentation:
+  Enabled: false
+
+Layout/LineLength:
+  Max: 120
+
+Metrics/ClassLength:
+  Max: 140
+
+Metrics/MethodLength:
+  Max: 120
+
+Metrics/AbcSize:
+  Max: 110
+
+Metrics/CyclomaticComplexity:
+  Max: 35
+
+Metrics/PerceivedComplexity:
+  Max: 33
+
+RSpec:
+  Language:
+    Expectations:
+      - expect
