@@ -26,6 +26,9 @@ Layout/LineLength:
 Style/Documentation:
   Enabled: false
 
+Style/ArgumentsForwarding:
+  Enabled: false
+
 Metrics/ClassLength:
   Max: 140
 

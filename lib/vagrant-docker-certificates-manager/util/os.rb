@@ -23,8 +23,8 @@ module VagrantDockerCertificatesManager
     end
 
     # Runs an external command safely using the array form (no shell interpolation).
-    def run(*)
-      out, err, st = Open3.capture3(*)
+    def run(*args)
+      out, err, st = Open3.capture3(*args)
       [st.success?, out, err]
     end
 
