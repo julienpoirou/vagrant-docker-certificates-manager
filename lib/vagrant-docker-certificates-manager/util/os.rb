@@ -23,8 +23,8 @@ module VagrantDockerCertificatesManager
     end
 
     # Runs an external command safely using the array form (no shell interpolation).
-    def run(*args)
-      out, err, st = Open3.capture3(*args)
+    def run(*)
+      out, err, st = Open3.capture3(*)
       [st.success?, out, err]
     end
 
@@ -78,13 +78,13 @@ module VagrantDockerCertificatesManager
     end
 
     def linux_nss_install(path, name)
-      db = "sql:#{File.join(Dir.home, ".pki", "nssdb")}"
+      db = "sql:#{File.join(Dir.home, '.pki', 'nssdb')}"
       run("certutil", "-d", db, "-A", "-t", "C,,",
           "-n", Cert.nickname_for(name), "-i", path.to_s).first
     end
 
     def linux_nss_uninstall(name)
-      db = "sql:#{File.join(Dir.home, ".pki", "nssdb")}"
+      db = "sql:#{File.join(Dir.home, '.pki', 'nssdb')}"
       run("certutil", "-d", db, "-D", "-n", Cert.nickname_for(name))
       true
     end
@@ -96,7 +96,7 @@ module VagrantDockerCertificatesManager
         "#{home}/.var/app/org.mozilla.firefox/.mozilla/firefox",
         "#{home}/snap/firefox/common/.mozilla/firefox"
       ].select { |d| File.directory?(d) }
-        .flat_map { |base| Dir.glob(File.join(base, "*.default*")) }
+       .flat_map { |base| Dir.glob(File.join(base, "*.default*")) }
     end
 
     def linux_firefox_install(path, name)
@@ -188,8 +188,8 @@ module VagrantDockerCertificatesManager
     end
 
     def win_has_cert_fingerprint?(fp)
-      ps  = "if (Get-ChildItem Cert:\\LocalMachine\\Root | " \
-            "Where-Object { $_.Thumbprint -eq '#{fp}' }) { 'YES' } else { 'NO' }"
+      ps = "if (Get-ChildItem Cert:\\LocalMachine\\Root | " \
+           "Where-Object { $_.Thumbprint -eq '#{fp}' }) { 'YES' } else { 'NO' }"
       ok, out, = run("powershell", "-NoProfile", "-NonInteractive",
                      "-EncodedCommand", Base64.strict_encode64(ps.encode("UTF-16LE")))
       ok && out.to_s.strip == "YES"

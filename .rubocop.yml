@@ -8,7 +8,7 @@ AllCops:
     - 'vendor/**/*'
     - 'tmp/**/*'
 
-require:
+plugins:
   - rubocop-rspec
 
 Metrics/BlockLength:
@@ -18,15 +18,13 @@ Metrics/BlockLength:
 Metrics/ModuleLength:
   Exclude:
     - 'lib/vagrant-docker-certificates-manager/helpers.rb'
+    - 'lib/vagrant-docker-certificates-manager/util/os.rb'
 
 Layout/LineLength:
   Max: 120
 
 Style/Documentation:
   Enabled: false
-
-Layout/LineLength:
-  Max: 120
 
 Metrics/ClassLength:
   Max: 140
