@@ -19,7 +19,7 @@ module VagrantDockerCertificatesManager
       ensure_dir!
       return {} unless File.exist?(db_path)
       JSON.parse(File.read(db_path))
-    rescue
+    rescue StandardError
       {}
     end
 

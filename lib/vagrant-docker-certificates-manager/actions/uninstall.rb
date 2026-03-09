@@ -12,7 +12,7 @@ module VagrantDockerCertificatesManager
       def initialize(app, env); @app = app; @env = env; end
 
       def call(env)
-        cfg = env[:machine].config.docker_certs
+        cfg = env[:machine].config.docker_certificates
         UiHelpers.set_locale!(cfg.locale || "en")
         if cfg.remove_on_destroy
           Ui.say(env, :info, "uninstall.start", name: cfg.cert_name)

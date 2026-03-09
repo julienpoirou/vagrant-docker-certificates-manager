@@ -80,14 +80,3 @@ en:
       success: "Certificate %{name} removed."
       fail: "Failed to remove certificate %{name}."
       skip: "Remove on destroy disabled; skipping."
-
-    errors:
-      invalid_path: "Invalid certificate path: %{path}"
-      missing_path_remove: "You must provide a path for removal."
-      not_found_for_remove: "No tracked certificate found for path: %{path}"
-      already_present: "The certificate %{name} already exists."
-      install_failed: "Certificate installation failed."
-      uninstall_failed: "Certificate removal failed."
-      remove_failed: "Remove failed."
-      os_unsupported: "Unsupported OS for this action."
-      unknown_command: "Unknown command: %{cmd}"

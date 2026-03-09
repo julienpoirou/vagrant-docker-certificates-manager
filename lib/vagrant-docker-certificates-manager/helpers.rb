@@ -21,7 +21,8 @@ module VagrantDockerCertificatesManager
       error:    "❌",
       version:  "💾",
       broom:    "🧹",
-      question: "❓"
+      question: "❓",
+      bug:      "🐛"
     }.freeze
 
     module_function
@@ -32,31 +33,28 @@ module VagrantDockerCertificatesManager
       base  = File.expand_path("../../locales", __dir__)
       ::I18n.load_path |= Dir[File.join(base, "*.yml")]
       ::I18n.available_locales = SUPPORTED
-      default = ((ENV["VDCM_LANG"] || ENV["LANG"] || "en")[0,2] rescue "en").to_sym
+      default = ((ENV["VDCM_LANG"] || ENV["LANG"] || "en")[0, 2] rescue "en").to_sym
       ::I18n.default_locale = SUPPORTED.include?(default) ? default : :en
       ::I18n.backend.load_translations
       @i18n_setup = true
     end
 
     def set_locale!(lang, strict: false)
-        setup_i18n!
-
-        raw = (lang || ENV["VDCM_LANG"] || ENV["LANG"] || "en").to_s
-        sym = raw[0, 2].to_s.downcase.to_sym
-        sym = :en if sym.nil? || sym == :""
-
-        unless SUPPORTED.include?(sym)
-            if strict
-            raise UnsupportedLocaleError,
-                    "#{e(:error)} Unsupported language: #{sym}. Available: #{SUPPORTED.join(', ')}"
-            else
-            sym = :en
-            end
+      setup_i18n!
+      raw = (lang || ENV["VDCM_LANG"] || ENV["LANG"] || "en").to_s
+      sym = raw[0, 2].to_s.downcase.to_sym
+      sym = :en if sym.nil? || sym == :""
+      unless SUPPORTED.include?(sym)
+        if strict
+          raise UnsupportedLocaleError,
+                "#{e(:error)} Unsupported language: #{sym}. Available: #{SUPPORTED.join(', ')}"
+        else
+          sym = :en
         end
-
-    ::I18n.locale = sym
-    ::I18n.backend.load_translations
-    sym
+      end
+      ::I18n.locale = sym
+      ::I18n.backend.load_translations
+      sym
     end
 
     def e(key, no_emoji: false)
@@ -88,6 +86,20 @@ module VagrantDockerCertificatesManager
       v.is_a?(Hash) ? v : {}
     end
 
+    def exists?(key)
+      ::I18n.exists?(ns_key(key), ::I18n.locale)
+    end
+
+    def our_key?(k)
+      OUR_SPACES.any? { |ns| k.start_with?("#{NAMESPACE}.#{ns}") || k.start_with?(ns) }
+    end
+
+    def debug_enabled?
+      ENV["VDCM_DEBUG"].to_s == "1"
+    end
+
+    # ── display ───────────────────────────────────────────────────────────────
+
     def level_to_emoji(level)
       case level
       when :success then :success
@@ -114,9 +126,11 @@ module VagrantDockerCertificatesManager
     end
 
     def debug(env_or_ui, msg)
-      return unless ENV["VDCM_DEBUG"].to_s == "1"
-      say(env_or_ui, :info, nil, raw: "#{e(:question)} #{msg}")
+      return unless debug_enabled?
+      say(env_or_ui, :info, nil, raw: "#{e(:bug)} #{msg}")
     end
+
+    # ── help ──────────────────────────────────────────────────────────────────
 
     def print_general_help(no_emoji: false, ui: nil)
       setup_i18n!
@@ -142,7 +156,7 @@ module VagrantDockerCertificatesManager
       usage = t("#{base}.usage",       default: nil)
       desc  = t("#{base}.description", default: nil)
       opts  = t_hash("#{base}.options")
-      exs   = ::I18n.t("#{base}.examples", default: [])
+      exs   = ::I18n.t(ns_key("#{base}.examples"), default: [])
 
       if title.nil? && usage.nil? && desc.nil? && opts.empty? && exs.empty?
         return print_general_help(no_emoji: no_emoji, ui: ui)
@@ -170,10 +184,6 @@ module VagrantDockerCertificatesManager
       else
         lines.each { |ln| puts ln }
       end
-    end
-
-    def our_key?(k)
-      OUR_SPACES.any? { |ns| k.start_with?("#{NAMESPACE}.#{ns}") || k.start_with?(ns) }
     end
   end
 end

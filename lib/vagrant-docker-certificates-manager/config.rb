@@ -19,7 +19,6 @@ module VagrantDockerCertificatesManager
     end
 
     def finalize!
-      @cert_path = @container_name unless @container_name.to_s.strip.empty?
       @install_on_up       = !!@install_on_up
       @remove_on_destroy   = !!@remove_on_destroy
       @manage_firefox      = !!@manage_firefox

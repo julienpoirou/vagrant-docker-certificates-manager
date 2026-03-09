@@ -80,14 +80,3 @@ fr:
       success: "Certificat %{name} supprimé."
       fail: "Échec de la suppression du certificat %{name}."
       skip: "Suppression à la destruction désactivée ; on ignore."
-
-    errors:
-      invalid_path: "Chemin de certificat invalide : %{path}"
-      missing_path_remove: "Vous devez fournir un chemin à supprimer."
-      not_found_for_remove: "Aucun certificat suivi pour le chemin : %{path}"
-      already_present: "Le certificat %{name} existe déjà."
-      install_failed: "Échec de l'installation du certificat."
-      uninstall_failed: "Échec de la suppression du certificat."
-      remove_failed: "Échec de la suppression."
-      os_unsupported: "Système non pris en charge pour cette action."
-      unknown_command: "Commande inconnue : %{cmd}"
