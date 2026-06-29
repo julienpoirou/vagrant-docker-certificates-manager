@@ -24,6 +24,15 @@ module VagrantDockerCertificatesManager
         @app.call(env)
       end
 
+      # Installs a configured certificate into the current host trust store.
+      #
+      # The operation is idempotent: when the fingerprint is already tracked,
+      # the current machine adopts the existing registry entry instead of
+      # reinstalling the certificate.
+      #
+      # @param cfg [#cert_path, #cert_name] Vagrant certificate configuration.
+      # @param env [Hash, nil] Vagrant environment hash.
+      # @return [Hash] Normalized result with code, status, data, or error.
       def self.perform_install(cfg, env)
         unless File.file?(cfg.cert_path)
           return { code: 1, status: "error",
@@ -32,9 +41,11 @@ error: UiHelpers.t("errors.invalid_path", path: cfg.cert_path) }
 
         name = cfg.cert_name.to_s.strip.empty? ? Cert.default_name_from(cfg.cert_path) : cfg.cert_name
         fp   = Cert.sha1(cfg.cert_path)
+        mid  = env && env[:machine]&.id
+
         if Registry.all.key?(fp)
-          return { code: 1, status: "error",
-error: UiHelpers.t("errors.already_present", name: name) }
+          Registry.adopt(fp, mid) if mid
+          return { code: 0, status: "success", data: { os: OS.detect, cert: name, already: true } }
         end
 
         os = OS.detect
@@ -51,7 +62,8 @@ firefox: cfg.manage_firefox)
           "path"      => File.expand_path(cfg.cert_path),
           "name"      => name,
           "nickname"  => Cert.nickname_for(name),
-          "os"        => os.to_s
+          "os"        => os.to_s,
+          "owners"    => [mid].compact
         })
         { code: 0, status: "success", data: { os: os, cert: name } }
       end

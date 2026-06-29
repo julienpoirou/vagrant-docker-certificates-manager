@@ -28,5 +28,16 @@ jobs:
         run: bundle exec rake
       - name: RuboCop
         run: bundle exec rubocop
+      - name: RubyDoc / YARD
+        run: |
+          bundle exec ruby \
+            -ryard/core_ext/array \
+            -ryard/core_ext/file \
+            -ryard/core_ext/hash \
+            -ryard/core_ext/insertion \
+            -ryard/core_ext/module \
+            -ryard/core_ext/string \
+            -ryard/core_ext/symbol_hash \
+            -e "ARGV.unshift('doc', '--no-output', '--no-save', '--quiet'); load Gem.bin_path('yard', 'yard')"
       - name: Build gem (sanity)
         run: gem build vagrant-docker-certificates-manager.gemspec

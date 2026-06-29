@@ -31,7 +31,11 @@ module VagrantDockerCertificatesManager
       return if defined?(@i18n_setup) && @i18n_setup
       ::I18n.enforce_available_locales = false
       base  = File.expand_path("../../locales", __dir__)
-      ::I18n.load_path |= Dir[File.join(base, "*.yml")]
+      paths = Dir[File.join(base, "*.yml")]
+      if paths.empty? && File.directory?(base)
+        paths = Dir.children(base).grep(/\.ya?ml\z/).map { |file| File.join(base, file) }
+      end
+      ::I18n.load_path |= paths
       ::I18n.available_locales = SUPPORTED
       default = ((ENV["VDCM_LANG"] || ENV["LANG"] || "en")[0, 2] rescue "en").to_sym
       ::I18n.default_locale = SUPPORTED.include?(default) ? default : :en
@@ -98,8 +102,6 @@ module VagrantDockerCertificatesManager
       ENV["VDCM_DEBUG"].to_s == "1"
     end
 
-    # ── display ───────────────────────────────────────────────────────────────
-
     def level_to_emoji(level)
       case level
       when :success then :success
@@ -130,8 +132,6 @@ module VagrantDockerCertificatesManager
       say(env_or_ui, :info, nil, raw: "#{e(:bug)} #{msg}")
     end
 
-    # ── help ──────────────────────────────────────────────────────────────────
-
     def print_general_help(no_emoji: false, ui: nil)
       setup_i18n!
       lines = []
@@ -139,6 +139,10 @@ module VagrantDockerCertificatesManager
       lines << "  #{t('cli.usage')}"
       t_hash("help.commands").each_value { |line| lines << "  #{line}" }
 
+      emit_lines(lines, ui)
+    end
+
+    def emit_lines(lines, ui)
       if ui
         lines.each { |ln| ui.info(ln) }
       else
@@ -151,39 +155,53 @@ module VagrantDockerCertificatesManager
       topic = (topic || "").to_s.strip.downcase
       return print_general_help(no_emoji: no_emoji, ui: ui) if topic.empty?
 
-      base  = "help.topic.#{topic}"
-      title = t("#{base}.title",       default: nil)
-      usage = t("#{base}.usage",       default: nil)
-      desc  = t("#{base}.description", default: nil)
-      opts  = t_hash("#{base}.options")
-      exs   = ::I18n.t(ns_key("#{base}.examples"), default: [])
+      fields = topic_help_fields("help.topic.#{topic}")
+      return print_general_help(no_emoji: no_emoji, ui: ui) if topic_help_empty?(fields)
 
-      if title.nil? && usage.nil? && desc.nil? && opts.empty? && exs.empty?
-        return print_general_help(no_emoji: no_emoji, ui: ui)
-      end
+      emit_lines(build_topic_help_lines(topic, fields, no_emoji), ui)
+    end
 
+    def topic_help_fields(base)
+      {
+        title: t("#{base}.title",       default: nil),
+        usage: t("#{base}.usage",       default: nil),
+        desc:  t("#{base}.description", default: nil),
+        opts:  t_hash("#{base}.options"),
+        exs:   ::I18n.t(ns_key("#{base}.examples"), default: [])
+      }
+    end
+
+    def topic_help_empty?(fields)
+      fields[:title].nil? && fields[:usage].nil? && fields[:desc].nil? &&
+        fields[:opts].empty? && fields[:exs].empty?
+    end
+
+    def build_topic_help_lines(topic, fields, no_emoji)
       lines = []
-      lines << "#{e(:info, no_emoji: no_emoji)} #{title || t('help.topic_fallback_title', topic: topic)}"
+      lines << "#{e(:info, no_emoji: no_emoji)} #{fields[:title] || t('help.topic_fallback_title', topic: topic)}"
       lines << "  #{t('help.usage_label')}"
-      lines << "    #{usage || 'vagrant certs help'}"
-      if desc && !desc.strip.empty?
-        lines << "  #{t('help.description_label')}"
-        lines << "    #{desc}"
-      end
-      unless opts.empty?
-        lines << "  #{t('help.options_label')}"
-        opts.each_value { |line| lines << "    #{line}" }
-      end
-      if exs.is_a?(Array) && !exs.empty?
-        lines << "  #{t('help.examples_label')}"
-        exs.each { |ex| lines << "    #{ex}" }
+      lines << "    #{fields[:usage] || 'vagrant certs help'}"
+
+      desc = fields[:desc]
+      append_help_section(lines, t("help.description_label"), ["    #{desc}"]) if desc && !desc.strip.empty?
+      unless fields[:opts].empty?
+        append_help_section(lines, t("help.options_label"), fields[:opts].values.map do |l|
+          "    #{l}"
+        end)
       end
 
-      if ui
-        lines.each { |ln| ui.info(ln) }
-      else
-        lines.each { |ln| puts ln }
+      exs = fields[:exs]
+      if exs.is_a?(Array) && !exs.empty?
+        append_help_section(lines, t("help.examples_label"), exs.map do |ex|
+          "    #{ex}"
+        end)
       end
+      lines
+    end
+
+    def append_help_section(lines, label, body_lines)
+      lines << "  #{label}"
+      body_lines.each { |line| lines << line }
     end
   end
 end

@@ -1,0 +1,51 @@
+name: Publish RubyDoc
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+      - name: Generate RubyDoc
+        run: |
+          bundle exec ruby \
+            -ryard/core_ext/array \
+            -ryard/core_ext/file \
+            -ryard/core_ext/hash \
+            -ryard/core_ext/insertion \
+            -ryard/core_ext/module \
+            -ryard/core_ext/string \
+            -ryard/core_ext/symbol_hash \
+            -e "ARGV.unshift('doc', '--quiet'); load Gem.bin_path('yard', 'yard')"
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: doc
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
