@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/julienpoirou/vagrant-docker-certificates-manager/compare/v0.3.0...v0.4.0) (2026-06-29)
+
+
+### Fonctionnalités ✨
+
+* Improve plugin quality and publish RubyDoc ([278298b](https://github.com/julienpoirou/vagrant-docker-certificates-manager/commit/278298b614ac9e4b0797d806bed3e0015d7fdb1f))
+
 ## [0.3.0](https://github.com/julienpoirou/vagrant-docker-certificates-manager/compare/v0.2.0...v0.3.0) (2026-03-09)
 
 
