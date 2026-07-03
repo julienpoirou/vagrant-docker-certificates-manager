@@ -46,13 +46,13 @@ module VagrantDockerCertificatesManager
     # @param org [String] Organization attribute written to the subject.
     # @param country [String] Country attribute written to the subject.
     # @return [Array<OpenSSL::X509::Certificate, OpenSSL::PKey::RSA>] Generated certificate and private key.
-    def generate_ca(cn:, days: 3650, org: "VDCM", country: "FR")
+    def generate_ca(common_name:, days: 3650, org: "VDCM", country: "FR")
       key  = OpenSSL::PKey::RSA.generate(2048)
       cert = OpenSSL::X509::Certificate.new
 
       cert.version    = 2
       cert.serial     = 1
-      cert.subject    = OpenSSL::X509::Name.parse("/CN=#{cn}/O=#{org}/C=#{country}")
+      cert.subject    = OpenSSL::X509::Name.parse("/CN=#{common_name}/O=#{org}/C=#{country}")
       cert.issuer     = cert.subject
       cert.public_key = key.public_key
       cert.not_before = Time.now
@@ -62,7 +62,7 @@ module VagrantDockerCertificatesManager
       cert.add_extension(ef.create_extension("basicConstraints",     "CA:TRUE",             true))
       cert.add_extension(ef.create_extension("keyUsage",             "keyCertSign,cRLSign", true))
       cert.add_extension(ef.create_extension("subjectKeyIdentifier", "hash"))
-      cert.sign(key, OpenSSL::Digest::SHA256.new)
+      cert.sign(key, OpenSSL::Digest.new("SHA256"))
 
       [cert, key]
     end
@@ -105,7 +105,7 @@ module VagrantDockerCertificatesManager
       unless crl_url.to_s.strip.empty?
         cert.add_extension(ef.create_extension("crlDistributionPoints", "URI:#{crl_url}"))
       end
-      cert.sign(ca_key, OpenSSL::Digest::SHA256.new)
+      cert.sign(ca_key, OpenSSL::Digest.new("SHA256"))
 
       [cert, key]
     end
@@ -122,7 +122,7 @@ module VagrantDockerCertificatesManager
       crl.version     = 1
       crl.last_update = Time.now
       crl.next_update = Time.now + (days * 24 * 60 * 60)
-      crl.sign(ca_key, OpenSSL::Digest::SHA256.new)
+      crl.sign(ca_key, OpenSSL::Digest.new("SHA256"))
       crl
     end
   end

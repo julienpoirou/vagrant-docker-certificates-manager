@@ -20,6 +20,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.3"
@@ -27,13 +31,6 @@ jobs:
       - name: Generate RubyDoc
         run: |
           bundle exec ruby \
-            -ryard/core_ext/array \
-            -ryard/core_ext/file \
-            -ryard/core_ext/hash \
-            -ryard/core_ext/insertion \
-            -ryard/core_ext/module \
-            -ryard/core_ext/string \
-            -ryard/core_ext/symbol_hash \
             -e "ARGV.unshift('doc', '--quiet'); load Gem.bin_path('yard', 'yard')"
       - uses: actions/upload-pages-artifact@v3
         with:

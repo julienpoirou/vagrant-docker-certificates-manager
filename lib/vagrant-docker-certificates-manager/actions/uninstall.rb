@@ -31,8 +31,8 @@ module VagrantDockerCertificatesManager
         # Generated material is purged only through explicit env flags to avoid
         # deleting a CA/server certificate that may be shared outside this action.
         files = []
-        files += [Generator::CA_CERT, Generator::CA_KEY, Generator::CRL] if env_flag("VDCM_PURGE_CA_ON_DESTROY")
-        files += [Generator::SRV_CRT, Generator::SRV_KEY]                if env_flag("VDCM_PURGE_SERVER_ON_DESTROY")
+        files += [Generator::CA_CERT, Generator::CA_KEY, Generator::CRL] if env_flag?("VDCM_PURGE_CA_ON_DESTROY")
+        files += [Generator::SRV_CRT, Generator::SRV_KEY]                if env_flag?("VDCM_PURGE_SERVER_ON_DESTROY")
         return if files.empty?
 
         dir = cfg.cert_dir
@@ -47,7 +47,7 @@ module VagrantDockerCertificatesManager
         end
       end
 
-      def env_flag(name)
+      def env_flag?(name)
         ENV[name].to_s == "1"
       end
 

@@ -57,6 +57,7 @@ module VagrantDockerCertificatesManager
     # @param fp [String] Certificate fingerprint.
     # @param owner [String, #to_s] Vagrant machine id adopting the certificate.
     # @return [Boolean] Whether the certificate was already tracked.
+    # rubocop:disable Naming/PredicateMethod -- boolean return kept for symmetry with #release
     def adopt(fp, owner)
       data = load
       return false unless data[fp]
@@ -64,6 +65,7 @@ module VagrantDockerCertificatesManager
       save(data)
       true
     end
+    # rubocop:enable Naming/PredicateMethod
 
     # Releases one owner from a tracked certificate.
     #
@@ -73,6 +75,7 @@ module VagrantDockerCertificatesManager
     # @param fp [String] Certificate fingerprint.
     # @param owner [String, #to_s] Vagrant machine id releasing the certificate.
     # @return [Boolean] Whether other owners remain after the release.
+    # rubocop:disable Naming/PredicateMethod -- boolean return kept for symmetry with #adopt
     def release(fp, owner)
       data = load
       rec  = data[fp]
@@ -83,6 +86,7 @@ module VagrantDockerCertificatesManager
       save(data)
       !owners.empty?
     end
+    # rubocop:enable Naming/PredicateMethod
 
     def find_by_path(path)
       data = load
