@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/julienpoirou/vagrant-docker-certificates-manager/compare/v0.4.0...v0.4.1) (2026-07-04)
+
+
+### Corrections 🐛
+
+* Bump version to publish gemspec documentation_uri metadata ([93246d0](https://github.com/julienpoirou/vagrant-docker-certificates-manager/commit/93246d0f968492e64063abbc611e67fd6fcaba2a))
+
 ## [0.4.0](https://github.com/julienpoirou/vagrant-docker-certificates-manager/compare/v0.3.0...v0.4.0) (2026-07-03)
 
 
