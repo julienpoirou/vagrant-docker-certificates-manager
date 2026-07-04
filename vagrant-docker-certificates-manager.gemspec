@@ -33,6 +33,7 @@ Gem::Specification.new do |s|
     "rubygems_mfa_required" => "true",
     "bug_tracker_uri" => "https://github.com/julienpoirou/vagrant-docker-certificates-manager/issues",
     "changelog_uri" => "https://github.com/julienpoirou/vagrant-docker-certificates-manager/blob/main/CHANGELOG.md",
+    "documentation_uri" => "https://www.rubydoc.info/gems/vagrant-docker-certificates-manager/",
     "source_code_uri" => "https://github.com/julienpoirou/vagrant-docker-certificates-manager",
     "homepage_uri" => "https://github.com/julienpoirou/vagrant-docker-certificates-manager"
   }
