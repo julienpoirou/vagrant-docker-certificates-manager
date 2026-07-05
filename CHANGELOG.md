@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2](https://github.com/julienpoirou/vagrant-docker-certificates-manager/compare/v0.4.1...v0.4.2) (2026-07-05)
+
+
+### Corrections 🐛
+
+* Wire the workflow_dispatch tag input into the Publish workflow ([433e090](https://github.com/julienpoirou/vagrant-docker-certificates-manager/commit/433e0902c1637ecca49636ef0bfa4300d67637ed))
+
 ## [0.4.1](https://github.com/julienpoirou/vagrant-docker-certificates-manager/compare/v0.4.0...v0.4.1) (2026-07-04)
 
 
