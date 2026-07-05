@@ -35,6 +35,10 @@ jobs:
       - name: Resolve tag/version/prerelease
         id: resolve
         shell: bash
+        env:
+          RELEASE_TAG_NAME: ${{ github.event.release.tag_name }}
+          RELEASE_PRERELEASE: ${{ github.event.release.prerelease }}
+          INPUT_TAG: ${{ github.event.inputs.tag }}
         run: |
           set -euo pipefail
           tag_event="${RELEASE_TAG_NAME:-}"
