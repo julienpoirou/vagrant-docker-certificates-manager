@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.3](https://github.com/julienpoirou/vagrant-docker-certificates-manager/compare/v0.4.2...v0.4.3) (2026-07-05)
+
+
+### Corrections 🐛
+
+* Keep lib/VERSION in sync via release-please's x-release-please-version annotation ([cc922cb](https://github.com/julienpoirou/vagrant-docker-certificates-manager/commit/cc922cbd12d7f27f6c5805ed88b730621f9ae530))
+
 ## [0.4.2](https://github.com/julienpoirou/vagrant-docker-certificates-manager/compare/v0.4.1...v0.4.2) (2026-07-05)
 
 
