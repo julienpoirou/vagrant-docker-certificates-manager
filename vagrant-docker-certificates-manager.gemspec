@@ -2,7 +2,8 @@
 
 Gem::Specification.new do |s|
   s.name        = "vagrant-docker-certificates-manager"
-  s.version     = File.read(File.join(__dir__, "lib/vagrant-docker-certificates-manager/VERSION")).strip
+  version_file  = File.join(__dir__, "lib/vagrant-docker-certificates-manager/VERSION")
+  s.version     = File.read(version_file).split("#").first.strip
   s.summary = "Manages installation/uninstallation of a local CA in system " \
               "stores and browsers (macOS/Linux/Windows)."
   s.description = "Vagrant plugin that installs a local certificate authority " \
