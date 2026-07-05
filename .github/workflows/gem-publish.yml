@@ -118,7 +118,7 @@ jobs:
           gem push "${GEM_FILE}"
 
       - name: Publish to GitHub Packages (RubyGems)
-        if: env.GEM_FILE != ''
+        if: always() && env.GEM_FILE != ''
         continue-on-error: true
         env:
           GPR_PAT: ${{ secrets.GH_PACKAGES_TOKEN }}
